@@ -1,0 +1,53 @@
+@startuml
+title Systemübersicht (Angular Frontend + C Backend + Persistenz)
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam wrapWidth 220
+skinparam maxMessageSize 200
+
+package "Client (Browser/Tablet/Phone)" {
+  [Angular UI] as Angular
+  [State/Store\n(Client-Spielzustand)] as Store
+  [Offline Cache\n(IndexedDB/LocalStorage)] as Cache
+
+  Angular --> Store : read/write state
+  Angular <--> Cache : offline read/write
+}
+
+package "Backend (C)" {
+  [REST API Layer\n(Routing/Controllers)] as Api
+  [Auth Module\n(JWT/Sessions)] as Auth
+  [Game Service\n(Use Cases)] as GameSvc
+  [Scoring/Rules Engine] as Rules
+  [Sync Service\n(Offline Resync)] as Sync
+  [Repository Layer\n(DAO/Repo)] as Repo
+}
+
+package "Infrastruktur" {
+  database "Database\n(SQLite/PostgreSQL)" as DB
+  [File Storage\n(optional: exports/logs)] as FS
+  [Reverse Proxy\n(optional: Nginx)] as Proxy
+}
+
+Angular --> Api : HTTP(S)\nJSON
+Proxy --> Api : forward requests\n(optional)
+
+Api --> Auth : authenticate/authorize
+Api --> GameSvc : call use-cases
+GameSvc --> Rules : compute score\nvalidate rules
+GameSvc --> Sync : reconcile offline events
+GameSvc --> Repo : persist/read
+
+Repo --> DB : SQL
+Sync --> DB : store events\nresolve conflicts
+Api --> FS : logs/exports\n(optional)
+
+note right of Sync
+Offline-Resync:
+- Client sendet Events (Turns) mit clientSeqNo
+- Backend dedupliziert (idempotent)
+- Konflikte: last-write-wins oder server-authoritative
+end note
+
+@enduml

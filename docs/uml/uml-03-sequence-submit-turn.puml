@@ -1,0 +1,54 @@
+@startuml
+title Sequenzdiagramm – Spielzug (Turn) erfassen und speichern
+
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 220
+
+actor Player
+participant "Angular UI" as UI
+participant "State/Store" as Store
+participant "Offline Cache\n(IndexedDB)" as Cache
+participant "REST API" as API
+participant "Game Service" as GameSvc
+participant "Rules Engine" as Rules
+participant "Sync Service" as Sync
+participant "Repository" as Repo
+database DB
+
+Player -> UI : wirft Darts\n(1–3 Würfe)
+UI -> Store : update local state
+UI -> Cache : save Turn\n(clientSeqNo)
+
+alt Online
+  UI -> API : POST /turns\n(Turn + clientSeqNo)
+  API -> GameSvc : submitTurn()
+  GameSvc -> Rules : validateTurn()
+  Rules --> GameSvc : OK / BUST / CHECKOUT
+  GameSvc -> Repo : persist Turn
+  Repo -> DB : INSERT
+  GameSvc --> API : updated scores\n+ status
+  API --> UI : 200 OK\n(authoritative state)
+  UI -> Store : reconcile server state
+else Offline
+  UI -> UI : mark Turn as pending
+end
+
+== Später: Re-Sync ==
+
+UI -> API : POST /sync\n(pending Turns)
+API -> Sync : reconcileEvents()
+Sync -> Repo : check clientSeqNo\n(idempotent)
+Repo -> DB : UPSERT
+Sync --> API : resolved state
+API --> UI : final state
+UI -> Store : update
+UI -> Cache : clear synced entries
+
+note right of Sync
+Server ist autoritativ.
+Doppelte clientSeqNo
+werden ignoriert.
+end note
+
+@enduml

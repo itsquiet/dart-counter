@@ -1,0 +1,34 @@
+@startuml
+title Aktivitätsdiagramm – Ablauf eines Spielzugs (Turn)
+
+skinparam shadowing false
+
+start
+:Aktiver Spieler wirft Darts;
+:Berechne Wurfpunkte;
+
+if (Punkte > Restscore?) then (ja)
+  :BUST;
+  :Score bleibt unverändert;
+  stop
+else (nein)
+  :Reduziere Score;
+endif
+
+if (Score == 0?) then (ja)
+  if (letzter Dart DOUBLE?) then (ja)
+    :CHECKOUT;
+    :Leg beenden;
+    stop
+  else (nein)
+    :BUST;
+    :Score zurücksetzen;
+    stop
+  endif
+endif
+
+:Turn beenden;
+:Spieler wechseln;
+stop
+
+@enduml

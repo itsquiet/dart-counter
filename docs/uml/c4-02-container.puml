@@ -1,0 +1,21 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title C4 – Container Diagram (stabil)
+
+Person(player, "Spieler", "Nutzt die Dart App")
+
+Container(web, "Angular Frontend", "TypeScript",
+"UI, Spielanzeige, Offline-Cache")
+
+Container(api, "C Backend", "C",
+"REST API, Spiellogik, Sync")
+
+ContainerDb(db, "Datenbank", "SQLite / PostgreSQL",
+"Spielstände, Turns, Events")
+
+Rel(player, web, "Nutzt", "HTTPS")
+Rel(web, api, "REST JSON", "HTTPS")
+Rel(api, db, "SQL")
+
+@enduml

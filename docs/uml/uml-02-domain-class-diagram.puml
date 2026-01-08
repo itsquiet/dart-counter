@@ -1,0 +1,107 @@
+@startuml
+title Domänenmodell – Dart Spiel (Match / Set / Leg / Turn)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+enum MatchStatus {
+  CREATED
+  RUNNING
+  FINISHED
+}
+
+enum LegStatus {
+  OPEN
+  FINISHED
+}
+
+enum TurnResult {
+  VALID
+  BUST
+  CHECKOUT
+}
+
+enum Multiplier {
+  SINGLE
+  DOUBLE
+  TRIPLE
+}
+
+class User {
+  +id : UUID
+  +displayName : String
+  +email : String
+  +createdAt : DateTime
+}
+
+class Player {
+  +id : UUID
+  +name : String
+  +isGuest : Boolean
+}
+
+class Match {
+  +id : UUID
+  +startScore : int
+  +bestOfSets : int
+  +bestOfLegs : int
+  +status : MatchStatus
+  +startedAt : DateTime
+  +finishedAt : DateTime
+}
+
+class MatchPlayer {
+  +matchId : UUID
+  +playerId : UUID
+  +playerIndex : int
+  +currentScore : int
+  +isWinner : Boolean
+}
+
+class Set {
+  +id : UUID
+  +setNo : int
+}
+
+class Leg {
+  +id : UUID
+  +legNo : int
+  +status : LegStatus
+  +startingPlayerId : UUID
+  +winnerPlayerId : UUID
+}
+
+class Turn {
+  +id : UUID
+  +turnNo : int
+  +scoreBefore : int
+  +scoreAfter : int
+  +result : TurnResult
+  +createdAt : DateTime
+  +clientSeqNo : int
+}
+
+class DartThrow {
+  +id : UUID
+  +dartNo : int
+  +baseValue : int
+  +multiplier : Multiplier
+  +points : int
+}
+
+User "1" --> "0..*" Match : creates
+Match "1" --> "2..*" MatchPlayer
+Player "1" --> "0..*" MatchPlayer
+Match "1" --> "1..*" Set
+Set "1" --> "1..*" Leg
+Leg "1" --> "0..*" Turn
+Turn "1" --> "1..3" DartThrow
+
+note right of Turn
+Ein Turn entspricht genau
+einem Spielzug (max. 3 Darts).
+Wird atomar gespeichert
+(offlinefähig).
+end note
+
+@enduml

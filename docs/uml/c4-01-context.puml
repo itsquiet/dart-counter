@@ -1,0 +1,16 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title C4 – Context Diagram
+
+Person(player, "Spieler", "Nutzt die Dart App")
+System(dartApp, "Dart Scoring App", "Zählt Spiele, Legs und Matches")
+
+System_Ext(db, "Datenbank", "Persistenter Spielzustand")
+System_Ext(auth, "Auth Provider", "Login / Token")
+
+Rel(player, dartApp, "Spielt Dart")
+Rel(dartApp, db, "Speichert Spielstände")
+Rel(dartApp, auth, "Authentifiziert")
+
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+title Zustandsdiagramm – Match / Set / Leg
+
+skinparam shadowing false
+
+[*] --> Created
+
+state Created {
+}
+
+Created --> Running : startMatch()
+
+state Running {
+  [*] --> SetOpen
+
+  state SetOpen {
+    [*] --> LegOpen
+    LegOpen --> LegFinished : checkout / bust
+    LegFinished --> LegOpen : nextLeg()
+  }
+
+  SetOpen --> SetFinished : legsWon >= bestOfLegs
+  SetFinished --> SetOpen : nextSet()
+}
+
+Running --> Finished : setsWon >= bestOfSets
+
+Finished --> [*]
+
+note right of LegOpen
+- Spieler wirft Turns
+- Score wird reduziert
+- BUST setzt Score zurück
+end note
+
+note right of Finished
+Match ist abgeschlossen.
+Keine weiteren Turns erlaubt.
+end note
+
+@enduml
