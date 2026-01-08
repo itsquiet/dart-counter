@@ -5,7 +5,7 @@
 
 int game_create(sqlite3 *db, int *game_id) {
     if (db == NULL || game_id == NULL) {
-        fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+        fprintf(stderr, "[DB] misuse: database handle is NULL in %s\n", __func__);
         return SQLITE_MISUSE;
     }
     

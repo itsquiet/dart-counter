@@ -5,8 +5,23 @@ PRAGMA foreign_keys = ON;
 -- =========================
 CREATE TABLE game (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    --Metadaten
     created_at    TEXT NOT NULL DEFAULT (datetime('now')),
-    status        TEXT NOT NULL CHECK (status IN ('CREATED', 'RUNNING', 'FINISHED'))
+    status        TEXT NOT NULL CHECK (status IN ('CREATED', 'RUNNING', 'FINISHED')),
+
+    --Spieltyp
+    game_type     TEXT NOT NULL CHECK (game_type IN ('X01', 'CRICKET')),
+
+    --Globale Standartregeln
+    default_start_score INTEGER,
+    default_out_rule TEXT CHECK (default_out_rule IN ('STRAIGHT', 'DOUBLE')),
+    default_in_rule  TEXT CHECK (default_in_rule  IN ('STRAIGHT', 'DOUBLE')),
+    default_legs_to_win INTEGER,
+    default_sets_to_win INTEGER
+
+    --Zukunft Modi Settings
+
+
 );
 
 -- =========================

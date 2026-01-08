@@ -5,6 +5,7 @@
 
 int game_player_add(sqlite3 *db, int game_id, int player_id, int play_order, int start_score) {
     if (db == NULL) {
+        fprintf(stderr, "[DB] misuse: database handle is NULL in %s\n", __func__);
         return SQLITE_MISUSE;
     }
 
