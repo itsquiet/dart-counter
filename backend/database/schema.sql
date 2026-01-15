@@ -10,7 +10,7 @@ CREATE TABLE game (
     status        TEXT NOT NULL CHECK (status IN ('CREATED', 'RUNNING', 'FINISHED')),
 
     --Spieltyp
-    game_mode     TEXT NOT NULL,
+    game_mode    INTEGER,
     legs_to_win  INTEGER,
     sets_to_win  INTEGER
 
@@ -78,12 +78,12 @@ CREATE TABLE x01_game_player_config(
     game_id INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
 
-    PRIMARY KEY (game_id, player_id),
 
     starting_score_override INTEGER,
     double_in_override BOOLEAN,
     double_out_override BOOLEAN,
 
+    PRIMARY KEY (game_id, player_id),
     FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player(id) ON DELETE CASCADE
 );
