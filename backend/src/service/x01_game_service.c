@@ -4,6 +4,12 @@
 #include "db/database.h"
 #include "repository/game_repository.h"
 #include "repository/game_player_repository.h"
+#include "repository/x01_game_config_repository.h"
+#include "repository/x01_game_player_config_repository.h"
+
+
+
+
 
 #include <stdio.h>
 

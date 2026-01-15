@@ -47,3 +47,29 @@ int rollback_transaction(sqlite3 *db) {
     }
     return rc;
 }
+
+
+
+int db_open(const char *path, sqlite3 **db) {
+    int rc = sqlite3_open(path, db);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "[DB] open failed: %s\n", sqlite3_errmsg(*db));
+        return rc;
+    }
+
+    // Enable foreign keys
+    rc = sqlite3_exec(*db, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "[DB] PRAGMA foreign_keys failed\n");
+        sqlite3_close(*db);
+        return rc;
+    }
+
+    return SQLITE_OK;
+}
+
+void db_close(sqlite3 *db) {
+    if (db) {
+        sqlite3_close(db);
+    }
+}
